@@ -44,7 +44,9 @@ Execute o comando de `apply` para aplicar as alterações e subir a aplicação:
 
 ### Arquivos na raiz
 
--  **main.tf**: Arquivo principal do Terraform que orquestra a criação da infraestrutura.
+-  **main.tf**: Arquivo principal do Terraform responsável pela criação dos recursos de infraestrutura AWS.
+-  **variables.tf**: Arquivo com variavéis utilizadas do código principal.
+-  **outputs.tf**: Arquivo com "saídas" dos componentes criados.
 -  **readme.md**: Arquivo com a documentação do projeto.
 
 ## Autores
