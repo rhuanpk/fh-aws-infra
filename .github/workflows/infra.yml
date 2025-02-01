@@ -1,0 +1,55 @@
+name: Deploy Terraform Infrastructure AWS
+
+on:
+  push:
+    branches:
+      - main  # Executa o pipeline ao fazer push na branch principal
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_DEFAULT_REGION: us-east-1  # Define a região padrão da AWS
+
+    steps:
+      # Etapa 1: Clonar o repositório
+      - name: Clone the repository
+        uses: actions/checkout@v4
+
+      # Etapa 2: Configurar as credenciais da AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      # Etapa 3: Instalar o Terraform CLI
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+
+      # Etapa 4: Inicializar o Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Etapa 5: Validar os arquivos Terraform
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Etapa 6: Exibir o plano de destruição
+      - name: Terraform Plan Destroy
+        run: terraform plan -destroy
+
+      # Etapa 7: Destruir a infraestrutura existente
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+
+      # Etapa 8: Criar o plano de execução para nova infraestrutura
+      - name: Terraform Plan Apply
+        run: terraform plan -out=tfplan
+
+      # Etapa 9: Aplicar a nova infraestrutura
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
